@@ -280,7 +280,14 @@ export const ThinkingMessage = ({
         )}
       >
         <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
-          <SparklesIcon size={14} />
+          <Image
+            src="/images/ed.png"
+            alt="kornelia logo"
+            width={60}
+            priority
+            height={60}
+            className="rounded-full"
+          />
         </div>
 
         <div className="flex flex-col gap-2 w-full">
