@@ -2,7 +2,14 @@
 
 import { UseChatHelpers } from "@ai-sdk/react";
 import { motion } from "framer-motion";
-import { FileText, Brain, MessageSquare, Upload } from "lucide-react";
+import {
+  FileText,
+  Brain,
+  MessageSquare,
+  Upload,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
 import {
   ChangeEvent,
   Dispatch,
@@ -77,9 +84,14 @@ export const Greeting = ({
     async (event: ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(event.target.files || []);
 
+      if (files.length === 0) return;
+
+      setUploadState("uploading");
+
       try {
         const uploadPromises = files.map((file) => uploadFile(file));
         const uploadedAttachments = await Promise.all(uploadPromises);
+
         const successfullyUploadedAttachments = uploadedAttachments.filter(
           (attachment) => attachment !== undefined
         );
@@ -90,6 +102,8 @@ export const Greeting = ({
         ]);
 
         if (successfullyUploadedAttachments.length > 0) {
+          setUploadState("processing");
+
           append(
             {
               role: "user",
@@ -98,15 +112,26 @@ export const Greeting = ({
             },
             { experimental_attachments: successfullyUploadedAttachments }
           );
-          // submitForm();
+
+          // Reset to success briefly, then back to idle
+          setTimeout(() => {
+            setUploadState("success");
+            setTimeout(() => setUploadState("idle"), 2000);
+          }, 1000);
+        } else {
+          setUploadState("idle");
         }
       } catch (error) {
         console.error("Error uploading files!", error);
-      } finally {
-        // setUploadQueue([]);
+        setUploadState("idle");
+      }
+
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
     },
-    []
+    [append, setAttachments]
   );
   return (
     <div className="max-w-6xl mx-auto md:mt-0 px-8  flex flex-col">
@@ -198,18 +223,56 @@ export const Greeting = ({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ delay: 1.2 }}
-        className="text-center pt-8"
+        className="text-center pt-4"
       >
-        <Button
-          onClick={(event) => {
-            event.preventDefault();
-            fileInputRef.current?.click();
-          }}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-shadow duration-300"
-        >
-          <Upload className="w-5 h-5" />
-          Ready to get started? Upload your first memo
-        </Button>
+        <div className="space-y-4">
+          <Button
+            onClick={(event) => {
+              event.preventDefault();
+              if (uploadState === "idle") {
+                fileInputRef.current?.click();
+              }
+            }}
+            disabled={uploadState !== "idle"}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed min-w-[280px]"
+          >
+            {uploadState === "idle" && (
+              <>
+                <Upload className="w-5 h-5" />
+                Ready to get started? Upload your first memo
+              </>
+            )}
+
+            {uploadState === "uploading" && (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Uploading your memo...
+              </>
+            )}
+
+            {uploadState === "processing" && (
+              <>
+                <Brain className="w-5 h-5 animate-pulse" />
+                AI is analyzing your memo...
+              </>
+            )}
+
+            {uploadState === "success" && (
+              <>
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+                Analysis complete!
+              </>
+            )}
+          </Button>
+
+          {/* File format hint */}
+          {uploadState === "idle" && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Supports PDF, DOC, DOCX, and TXT files
+            </p>
+          )}
+        </div>
+
         <input
           type="file"
           className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
@@ -217,6 +280,7 @@ export const Greeting = ({
           multiple
           onChange={handleFileChange}
           tabIndex={-1}
+          accept=".pdf,.doc,.docx,.txt"
         />
       </motion.div>
     </div>

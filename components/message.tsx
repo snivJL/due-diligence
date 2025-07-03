@@ -259,7 +259,7 @@ export const PreviewMessage = memo(
 export const ThinkingMessage = ({
   messagesLength,
 }: {
-  messagesLength: number;
+  messagesLength?: number;
 }) => {
   const role = "assistant";
 

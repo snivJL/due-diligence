@@ -1,15 +1,16 @@
-import { Toaster } from 'sonner';
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from "sonner";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
 
-import './globals.css';
-import { SessionProvider } from 'next-auth/react';
+import "./globals.css";
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   // metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Kornelia',
-  description: 'Korefocus chatbot',
+  title: "Due Diligence Kick Off - Summary and Follow Up Questions",
+  description:
+    "This demo is for investors who receive high volumes of company memos and need a fast, reliable way to surface key insights and risks. It summarizes each memo and generates essential follow-up questions, streamlining due diligence and decision-making.",
 };
 
 export const viewport = {
@@ -17,19 +18,19 @@ export const viewport = {
 };
 
 const geist = Geist({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-geist',
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-geist",
 });
 
 const geistMono = Geist_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-geist-mono',
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-geist-mono",
 });
 
-const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';
-const DARK_THEME_COLOR = 'hsl(240deg 10% 3.92%)';
+const LIGHT_THEME_COLOR = "hsl(0 0% 100%)";
+const DARK_THEME_COLOR = "hsl(240deg 10% 3.92%)";
 const THEME_COLOR_SCRIPT = `\
 (function() {
   var html = document.documentElement;
