@@ -22,14 +22,22 @@ export async function generateTitleFromUserMessage({
 }) {
   const { text: title } = await generateText({
     model: myProvider.languageModel("title-model"),
-    system: `\n
-    - you will generate a short title based on the attachment contained in the first message a user begins a conversation with
-    - strictly limit the title to "[Company name] Memo"
-    - do not use quotes or colons`,
+    system: `
+You are given a user message whose *first* attachment is a company memo.  
+Your task is to **extract the company’s name** and output **exactly**:
+
+[CompanyName] Memo
+
+—with no additional words, punctuation, quotes, colons, line breaks, or whitespace.  
+The output must match the regex: /^[A-Za-z0-9 &.-]+ Memo$/.  
+Examples of valid outputs:
+- Facebook Memo
+- Acme Corp Memo
+`,
     prompt: JSON.stringify(message),
   });
 
-  return title;
+  return title.trim();
 }
 
 export async function deleteTrailingMessages({ id }: { id: string }) {

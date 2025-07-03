@@ -174,13 +174,13 @@ function PureMultimodalInput({
           ...currentAttachments,
           ...successfullyUploadedAttachments,
         ]);
-        console.log(attachments);
+
         if (successfullyUploadedAttachments.length > 0) {
           append(
             {
               role: "user",
               content:
-                "Summarize key strengths, weaknesses, and risks, and generate follow-up questions for the founders",
+                "Give me a brief summary of what the business does, followed by its key strengths, weaknesses, and risks. Then, generate a separate list of follow-up questions for the founders",
             },
             { experimental_attachments: successfullyUploadedAttachments }
           );

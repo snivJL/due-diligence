@@ -42,7 +42,7 @@ function PureMessages({
     chatId,
     status,
   });
-
+  console.log(messages[0]);
   return (
     <div
       ref={messagesContainerRef}
@@ -56,7 +56,21 @@ function PureMessages({
         <PreviewMessage
           key={message.id}
           chatId={chatId}
-          message={message}
+          message={
+            index === 0
+              ? {
+                  ...message,
+                  content:
+                    "Generate a business summary, identify strengths, weaknesses, and risks, and create key questions for founders.",
+                  parts: [
+                    {
+                      text: "Generate a business summary, identify strengths, weaknesses, and risks, and create key questions for founders.",
+                      type: "text",
+                    },
+                  ],
+                }
+              : message
+          }
           isLoading={status === "streaming" && messages.length - 1 === index}
           vote={
             votes
@@ -65,7 +79,7 @@ function PureMessages({
           }
           setMessages={setMessages}
           reload={reload}
-          isReadonly={isReadonly}
+          isReadonly={index === 0 || isReadonly}
           requiresScrollPadding={
             hasSentMessage && index === messages.length - 1
           }

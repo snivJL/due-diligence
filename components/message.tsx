@@ -3,7 +3,7 @@
 import type { UIMessage } from "ai";
 import cx from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import type { Vote } from "@/lib/db/schema";
 import { DocumentToolCall, DocumentToolResult } from "./document";
 import { PencilEditIcon, SparklesIcon } from "./icons";
@@ -20,6 +20,7 @@ import { DocumentPreview } from "./document-preview";
 import { MessageReasoning } from "./message-reasoning";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import Image from "next/image";
+import { Brain, FileText, MessageSquare } from "lucide-react";
 
 const PurePreviewMessage = ({
   chatId,
@@ -63,7 +64,7 @@ const PurePreviewMessage = ({
           {message.role === "assistant" && (
             <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
               <Image
-                src="/images/ed.png"
+                src="/images/logo.svg"
                 alt="kornelia logo"
                 width={60}
                 height={60}
@@ -281,7 +282,7 @@ export const ThinkingMessage = ({
       >
         <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
           <Image
-            src="/images/ed.png"
+            src="/images/logo.svg"
             alt="kornelia logo"
             width={60}
             priority
@@ -291,11 +292,129 @@ export const ThinkingMessage = ({
         </div>
 
         <div className="flex flex-col gap-2 w-full">
-          <div className="flex flex-col gap-4 text-muted-foreground">
-            {messagesLength === 1 ? "Preparing your summary..." : "Thinking..."}
+          <div className="flex flex-col gap-4">
+            {messagesLength === 1 ? (
+              <AnimatedLoadingText text="Preparing your summary..." />
+            ) : (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span>Thinking</span>
+                <div className="flex space-x-1">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      className="w-1 h-1 bg-muted-foreground rounded-full"
+                      animate={{
+                        scale: [1, 1.5, 1],
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 1,
+                        repeat: Number.POSITIVE_INFINITY,
+                        delay: i * 0.2,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </motion.div>
+  );
+};
+const AnimatedLoadingText = ({ text }: { text: string }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const steps = [
+    { text: "Reading your memo", color: "text-blue-500" },
+    { text: "Analyzing content", color: "text-purple-500" },
+    {
+      text: "Generating questions",
+      color: "text-orange-500",
+    },
+    { text: "Finalizing summary", color: "text-green-500" },
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % steps.length);
+    }, 12000);
+
+    return () => clearInterval(interval);
+  }, [steps.length]);
+
+  const currentStepData = steps[currentStep];
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Main animated text */}
+      <div className="flex items-center gap-3">
+        <motion.span
+          key={currentStep}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-muted-foreground"
+        >
+          {currentStepData.text}
+        </motion.span>
+
+        {/* Animated dots */}
+        <div className="flex space-x-1">
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.6, 1, 0.6],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: i * 0.2,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Progress indicator */}
+      <div className="flex gap-2">
+        {steps.map((_, index) => (
+          <motion.div
+            key={index}
+            className={cn(
+              "h-1 rounded-full transition-all duration-500",
+              index <= currentStep
+                ? "bg-blue-500"
+                : "bg-gray-200 dark:bg-gray-700"
+            )}
+            initial={{ width: 0 }}
+            animate={{
+              width: index === currentStep ? "24px" : "8px",
+            }}
+            transition={{ duration: 0.5 }}
+          />
+        ))}
+      </div>
+
+      {/* Processing details */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="text-xs text-muted-foreground/80 bg-muted/50 rounded-lg p-3 border border-muted"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+          <span>AI is working on your memo</span>
+        </div>
+        <div className="text-muted-foreground/60">
+          This may take 30-60 seconds for comprehensive analysis
+        </div>
+      </motion.div>
+    </div>
   );
 };
