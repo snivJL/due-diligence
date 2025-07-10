@@ -114,21 +114,13 @@ function PureMultimodalInput({
       experimental_attachments: attachments,
     });
 
-    setAttachments([]);
     setLocalStorageInput("");
     resetHeight();
 
     if (width && width > 768) {
       textareaRef.current?.focus();
     }
-  }, [
-    attachments,
-    handleSubmit,
-    setAttachments,
-    setLocalStorageInput,
-    width,
-    chatId,
-  ]);
+  }, [attachments, handleSubmit, setLocalStorageInput, width, chatId]);
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -176,14 +168,14 @@ function PureMultimodalInput({
         ]);
 
         if (successfullyUploadedAttachments.length > 0) {
-          append(
-            {
-              role: "user",
-              content:
-                "Give me a brief summary of what the business does, followed by its key strengths, weaknesses, and risks. Then, generate a separate list of follow-up questions for the founders",
-            },
-            { experimental_attachments: successfullyUploadedAttachments }
-          );
+          // append(
+          //   {
+          //     role: "user",
+          //     content:
+          //       "Give me a brief summary of what the business does, followed by its key strengths, weaknesses, and risks. Then, generate a separate list of follow-up questions for the founders",
+          //   },
+          //   { experimental_attachments: successfullyUploadedAttachments }
+          // );
           // submitForm();
         }
       } catch (error) {
@@ -301,9 +293,11 @@ function PureMultimodalInput({
         }}
       />
 
-      <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
-        <AttachmentsButton fileInputRef={fileInputRef} status={status} />
-      </div>
+      {messages.length > 0 && (
+        <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
+          <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+        </div>
+      )}
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
         {status === "submitted" ? (

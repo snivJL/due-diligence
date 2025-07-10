@@ -107,8 +107,7 @@ export const Greeting = ({
           append(
             {
               role: "user",
-              content:
-                "Give me a brief summary of what the business mentionned in the company memo does, followed by its key strengths, weaknesses, and risks. Then, generate a separate list of follow-up questions for the founders",
+              content: "Create a company memo",
             },
             { experimental_attachments: successfullyUploadedAttachments }
           );
@@ -184,7 +183,6 @@ export const Greeting = ({
       >
         <div className="space-y-4">
           {steps.map((step, index) => {
-            const Icon = step.icon;
             return (
               <motion.div
                 key={step.title}

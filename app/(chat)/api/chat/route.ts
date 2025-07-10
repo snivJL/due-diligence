@@ -35,6 +35,7 @@ import { after } from "next/server";
 import type { Chat } from "@/lib/db/schema";
 import { differenceInSeconds } from "date-fns";
 import { ChatSDKError } from "@/lib/errors";
+import { createMemo } from "@/lib/ai/tools/create-memo";
 
 export const maxDuration = 60;
 
@@ -107,7 +108,7 @@ export async function POST(request: Request) {
       }
     }
     const previousMessages = await getMessagesByChatId({ id });
-    console.log(message);
+    console.log("IN API AROUTE MESSAGE:", message);
     const messages = appendClientMessage({
       // @ts-expect-error: todo add type conversion from DBMessage[] to UIMessage[]
       messages: previousMessages,
@@ -129,7 +130,7 @@ export async function POST(request: Request) {
 
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
-
+    console.log(selectedChatModel);
     const stream = createDataStream({
       execute: (dataStream) => {
         const result = streamText({
@@ -137,25 +138,11 @@ export async function POST(request: Request) {
           system: systemPrompt({ selectedChatModel }),
           messages,
           maxSteps: 5,
-          experimental_activeTools:
-            selectedChatModel === "chat-model-reasoning"
-              ? []
-              : [
-                  "getWeather",
-                  "createDocument",
-                  "updateDocument",
-                  "requestSuggestions",
-                ],
+          experimental_activeTools: ["createMemo"],
           experimental_transform: smoothStream({ chunking: "word" }),
           experimental_generateMessageId: generateUUID,
           tools: {
-            getWeather,
-            createDocument: createDocument({ session, dataStream }),
-            updateDocument: updateDocument({ session, dataStream }),
-            requestSuggestions: requestSuggestions({
-              session,
-              dataStream,
-            }),
+            createMemo,
           },
           onFinish: async ({ response }) => {
             if (session.user?.id) {

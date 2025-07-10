@@ -1,0 +1,96 @@
+import { tool } from "ai";
+import { z } from "zod";
+
+export const createMemo = tool({
+  description:
+    "Use this tool when the user asks to create a company memo to get the desired output format",
+  parameters: z.object({}),
+  execute: async () => {
+    return `
+<!-- IMPORTANT: ONLY output this in your final answer, do not add "Thank you for these information or something similar -->
+<!--
+SECTION: Titre
+- Objectif : Ecrire le nom de la company
+- Formulation : Donnez UNIQUEMENT le nom de la company.
+-->
+
+## [Insert company name here]
+
+<!--
+SECTION: Résumé concis  
+- Objectif : Un paragraphe de 4–5 lignes maximum.  
+- Formulation : Commencez immédiatement par « Le mémo présente… ».
+-->
+
+## Résumé concis
+- …
+
+<!--
+SECTION: Forces & Faiblesses  
+**Forces :**  
+- Listez exactement 3 points forts, numérotés.  
+**Faiblesses :**  
+- Listez exactement 3 points faibles, numérotés.
+-->
+
+## Forces & Faiblesses
+**Forces :**  
+1. …  
+2. …  
+3. …  
+
+**Faiblesses :**  
+1. …  
+2. …  
+3. …  
+
+<!--
+SECTION: Principaux risques  
+- Objectif : Lister **exactement 3** risques ou défis.  
+- Forme : Chaque item commence par « – » suivi d’une phrase courte.
+-->
+
+## Principaux risques
+- …  
+- …  
+- …  
+
+<!--
+SECTION: Questions pour investisseurs  
+- Total : 20 questions réparties en 5 thèmes.  
+- Chaque thème est un sous-titre \`###\` suivi d’une lettre, d’un titre, puis 4 questions numérotées.
+-->
+
+## Questions pour investisseurs
+
+### A. Business Model  
+1. …  
+2. …  
+3. …  
+4. …  
+
+### B. Opportunité de marché  
+1. …  
+2. …  
+3. …  
+4. …  
+
+### C. Santé financière  
+1. …  
+2. …  
+3. …  
+4. …  
+
+### D. Équipe dirigeante  
+1. …  
+2. …  
+3. …  
+4. …  
+
+### E. Risques & défis  
+1. …  
+2. …  
+3. …  
+4. …  `;
+  },
+});

@@ -42,7 +42,7 @@ function PureMessages({
     chatId,
     status,
   });
-  console.log(messages[0]);
+  console.log("IN MESSAGES COMPONENT FIRST MESSAGE", messages[0]);
   return (
     <div
       ref={messagesContainerRef}
