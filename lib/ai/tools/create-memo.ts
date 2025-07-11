@@ -14,7 +14,7 @@ SECTION: Titre
 - Formulation : Donnez UNIQUEMENT le nom de la company.
 -->
 
-## [Insert company name here]
+## {companyName}
 
 <!--
 SECTION: Résumé concis  

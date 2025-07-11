@@ -41,7 +41,9 @@ const PurePreviewMessage = ({
   requiresScrollPadding: boolean;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
-
+  const assistantHasTextPart =
+    message.role === "assistant" &&
+    message.parts?.some((part) => part.type === "text");
   return (
     <AnimatePresence>
       <motion.div
@@ -61,7 +63,7 @@ const PurePreviewMessage = ({
           )}
         >
           {message.role === "assistant" && (
-            <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
+            <div className="size-8 translate-y-4 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
               <Image
                 src="/images/logo.svg"
                 alt="kornelia logo"
@@ -194,6 +196,36 @@ const PurePreviewMessage = ({
                     </div>
                   );
                 }
+                if (state === "result") {
+                  const { result } = toolInvocation;
+
+                  return (
+                    <div key={toolCallId}>
+                      {toolName === "getWeather" ? (
+                        <Weather weatherAtLocation={result} />
+                      ) : toolName === "createDocument" ? (
+                        <DocumentPreview
+                          isReadonly={isReadonly}
+                          result={result}
+                        />
+                      ) : toolName === "updateDocument" ? (
+                        <DocumentToolResult
+                          type="update"
+                          result={result}
+                          isReadonly={isReadonly}
+                        />
+                      ) : toolName === "requestSuggestions" ? (
+                        <DocumentToolResult
+                          type="request-suggestions"
+                          result={result}
+                          isReadonly={isReadonly}
+                        />
+                      ) : assistantHasTextPart ? null : (
+                        <AnimatedLoadingText text="Preparing your summary..." />
+                      )}
+                    </div>
+                  );
+                }
               }
             })}
 
@@ -293,7 +325,7 @@ export const ThinkingMessage = ({
     </motion.div>
   );
 };
-const AnimatedLoadingText = ({ text }: { text: string }) => {
+export const AnimatedLoadingText = ({ text }: { text: string }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const steps = [

@@ -145,6 +145,7 @@ export async function POST(request: Request) {
             createMemo,
           },
           onFinish: async ({ response }) => {
+            console.log("RESPONSE ON FINISH: ", response);
             if (session.user?.id) {
               try {
                 const assistantId = getTrailingMessageId({
@@ -192,6 +193,7 @@ export async function POST(request: Request) {
           sendReasoning: true,
         });
       },
+
       onError: () => {
         return "Oops, an error occurred!";
       },

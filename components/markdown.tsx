@@ -82,7 +82,7 @@ const components: Partial<Components> = {
   h1: ({ node, children, ...props }) => {
     return (
       <h1
-        className="text-4xl font-bold mt-8 mb-4 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2"
+        className="text-4xl font-bold mt-4 mb-4 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2"
         {...props}
       >
         {children}
@@ -93,7 +93,7 @@ const components: Partial<Components> = {
   h2: ({ node, children, ...props }) => {
     return (
       <h2
-        className="text-3xl font-bold mt-8 mb-4 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2"
+        className="text-3xl font-bold mt-4 mb-4 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2"
         {...props}
       >
         {children}
